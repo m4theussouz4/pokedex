@@ -18,6 +18,7 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/pokedex",
+            "baseHref": "/pokedex/",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -72,6 +73,10 @@
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy",
+          "options": {}
         }
       }
     }
