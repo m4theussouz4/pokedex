@@ -1,0 +1,32 @@
+{
+    "Type": "Type",
+    "All": "All",
+    "Abilities": "Abilities",
+    "Height": "Height",
+    "Weight": "Weight",
+    "Weaknesses": "Weaknesses",
+    "Base exp": "Base exp",
+    "Stats": "Statistics",
+    "Search your Pokemon!": "Search your Pokemon!",
+    "Pokemon not found": "Pokemon not found",
+    "PokemonTypes": {
+        "normal": "Normal",
+        "fire": "Fire",
+        "water": "Water",
+        "electric": "Electric",
+        "grass": "Grass",
+        "ice": "Ice",
+        "fighting": "Fighting",
+        "poison": "Poison",
+        "ground": "Ground",
+        "flying": "Flying",
+        "psychic": "Psychic",
+        "bug": "Bug",
+        "rock": "Rock",
+        "ghost": "Ghost",
+        "dragon": "Dragon",
+        "dark": "Dark",
+        "steel": "Steel",
+        "fairy": "Fairy"
+    }
+}
