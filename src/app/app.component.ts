@@ -4,9 +4,13 @@ import { RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  template: `<router-outlet></router-outlet>`,
+  styles: [
+    `
+      :host {
+        min-height: 100%;
+      }
+    `,
+  ],
 })
-export class AppComponent {
-  title = 'pokedex';
-}
+export class AppComponent {}

@@ -1,0 +1,105 @@
+@if (pokemonSelected()) {
+    <div class="pokemon-info">
+        <div
+            class="pokemon-info-container"
+            [ngStyle]="{'position': pokemonInfoFixed() ? 'sticky' : 'inherit'}"
+        >
+    
+            <!-- <div class="gender"> </div> -->
+    
+            <img
+                class="img"
+                [src]="pokemonSelected().img"
+                alt
+            >
+            <div class="id">#{{ pokemonSelected().id }}</div>
+            <div class="name">{{ pokemonSelected().name }}</div>
+            <div class="types-container">
+                @for (pokemonType of pokemonSelected().types; track $index) {
+                    <div
+                        class="type"
+                        [ngStyle]="{'background-color': pokemonTypesColors[pokemonType.type.name]}"
+                    >
+                        {{ 'PokemonTypes.' + pokemonType.type.name | transloco }}
+                    </div>
+                }
+            </div>
+    
+            <!-- <div class="section-title">Pokedex Entry</div>
+    
+            <div class="description">{{pokemonSelected().species?.description}}</div> -->
+    
+    
+            <div class="section-title">{{ 'Abilities' | transloco }}</div>
+    
+            <div class="abilities-container">
+                @for (pokemonAbility of pokemonSelected().abilities; track $index) {
+                    <div class="ability">{{ pokemonAbility.ability.name }}</div>
+                }
+            </div>
+    
+            <div class="attributes-container">
+                <div>
+                    <div class="section-title">{{ 'Height' | transloco }}</div>
+                    <div class="attribute">{{ pokemonSelected().height }}m</div>
+                </div>
+                <div>
+                    <div class="section-title">{{ 'Weight' | transloco }}</div>
+                    <div class="attribute">{{ pokemonSelected().weight }}kg</div>
+                </div>
+                <div>
+                    <div class="section-title">{{ 'Weaknesses' | transloco }}</div>
+                    <div class="attribute">
+                        @for (pokemonWeakness of (pokemonWeaknesses$ | async)[pokemonSelected().types[0].type.name]; track $index) {
+                            <img
+                                class="attribute-img"
+                                src="./assets/icons/{{pokemonWeakness}}.svg"
+                                [ngStyle]="{'background-color': pokemonTypesColors[pokemonWeakness]}"
+                            >
+                        }
+                    </div>
+                </div>
+                <div>
+                    <div class="section-title">{{ 'Base exp' | transloco }}</div>
+                    <div class="attribute">{{ pokemonSelected().base_experience }}</div>
+                </div>
+            </div>
+    
+            <div class="section-title">{{ 'Stats' | transloco }}</div>
+    
+            <div class="statistics-container">
+                @for (pokemonStat of pokemonSelected().stats; track $index) {
+                    <div class="statistic">
+                        <div
+                            class="statistic-title"
+                            [ngStyle]="{'background-color': pokemonStatisticColors[pokemonStat.stat.name]}"
+                        >
+                            {{ pokemonStatisticLabels[pokemonStat.stat.name] }}
+                        </div>
+                        <div class="statistic-value">{{ pokemonStat.base_stat }}</div>
+                    </div>
+                }
+                <div class="statistic">
+                    <div class="statistic-title">{{ pokemonStatisticLabels['total'] }}</div>
+                    <div class="statistic-value">{{ totalStats() }}</div>
+                </div>
+            </div>
+    
+            <!-- <div class="section-title">Evolution</div>
+    
+            <div class="evolution-container">
+                <img src="">
+                <div></div>
+                <img src="">
+                <div></div>
+                <img src="">
+            </div>
+    
+            <div class="change-pokemon">
+                <div class="preview"></div>
+                <div class="next"></div>
+            </div> -->
+    
+        </div>
+    </div>
+}

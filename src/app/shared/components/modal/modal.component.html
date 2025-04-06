@@ -1,0 +1,15 @@
+<div #modal class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button
+                    type="button"
+                    class="btn-close"
+                    aria-label="Close"
+                    (click)="close()"
+                ></button>
+                <ng-content></ng-content>
+            </div>
+        </div>
+    </div>
+</div>
