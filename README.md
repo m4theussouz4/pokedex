@@ -1,64 +1,34 @@
-# Pokedex
+# 🔍 Pokédex em Angular
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.0.
+[![GitHub Pages](https://img.shields.io/badge/demo-online-blue.svg)](https://m4theussouz4.github.io/pokedex/)
+[![Angular](https://img.shields.io/badge/angular-19.2-red.svg)](https://angular.io/)
 
-## Development server
+Uma Pokédex moderna desenvolvida com Angular 19.2, utilizando os padrões mais atuais do framework, suporte a múltiplos idiomas, e um visual responsivo. O projeto foi pensado para ser leve, rápido e ideal para demonstrar habilidades práticas com Angular em entrevistas técnicas.
 
-To start a local development server, run:
+## 🚀 Demonstração
+
+👉 Acesse a Pokédex funcional: [https://m4theussouz4.github.io/pokedex/](https://m4theussouz4.github.io/pokedex/)
+
+## 🧠 Tecnologias e práticas utilizadas
+
+- ✅ **Angular 19.2+** com `@if`, `@for` e `signals`
+- 🌍 **Internacionalização com `@jsverse/transloco`** (Português, Inglês e Espanhol)
+- 🧪 **Testes unitários com Jest**
+- 🎨 **Estilização com Bootstrap 5** e componentes próprios
+- 📦 **Componentização e organização de código de forma escalável**
+- 📄 **Hospedado no GitHub Pages**
+
+## 📦 Instalação
 
 ```bash
+git clone https://github.com/m4theussouz4/pokedex.git
+cd pokedex
+npm install
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 🧪 Executar testes
 
 ```bash
-ng generate component component-name
+npm run test
 ```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
-
-## Resources 
-
-Jest
-jsverseTransloco
