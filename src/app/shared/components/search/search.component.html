@@ -1,0 +1,11 @@
+<div class="search-box">
+    <input
+        type="text"
+        [placeholder]="'Search your Pokemon!' | transloco"
+        [formControl]="search"
+        (keydown.enter)="searchPokemon()"
+    >
+    <button class="btn-search" (click)="searchPokemon()">
+        <img src="./assets/icons/pokeball.png">
+    </button>
+</div>

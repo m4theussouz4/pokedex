@@ -1,0 +1,4 @@
+@if (isPageLoader()) { <div class="loader-background"></div> }
+<div [ngClass]="isPageLoader() ? 'fixed-loader' : 'container-loader'">
+    <div class="c-loader"></div>
+</div>
