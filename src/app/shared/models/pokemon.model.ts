@@ -81,6 +81,7 @@ export interface PokemonInfo {
     id: number,
     name: string,
     url?: string,
+    description?: string,
     base_experience: number,
     height: number,
     weight: number,
@@ -108,4 +109,19 @@ export interface PokemonInfo {
             url: string,
         },
     }[],
+    evolutionChain?: evolutionChain,
+}
+
+export interface evolutionChain {
+    evolution0: evolveObj,
+    evolution1: evolveObj,
+    evolution2: evolveObj,
+}
+
+interface evolveObj {
+    id: number,
+    name: string,
+    url: string,
+    img: string,
+    min_level?: number,
 }

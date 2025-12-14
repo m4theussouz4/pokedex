@@ -6,6 +6,7 @@ import { PokemonService } from '../shared/services/pokemon/pokemon.service';
 import * as AppActions from './app.actions';
 import * as AppSelectors from './app.selectors'
 import { AppState } from './app.reducer';
+import { PokemonInfo } from '../shared/models/pokemon.model';
 
 @Injectable()
 export class AppEffects {
@@ -21,14 +22,14 @@ export class AppEffects {
         return this.pokemonService.getAll(pokemonState.currentOffset).pipe(
           switchMap(async data => {
 
-            let pokemonListClone: any[] = [];
+            let pokemonListClone: PokemonInfo[] = [];
 
             for (const pokemon of data.results) {
               await new Promise<void>((resolve) => {
                 this.pokemonService.getById(pokemon.name).subscribe(pokemonInfo => {
                   pokemonListClone.push({ ...pokemon, ...pokemonInfo });
                   resolve();
-                })
+                });
               })
             }
 
@@ -102,7 +103,7 @@ export class AppEffects {
                 this.pokemonService.getById(pokemon.name).subscribe(pokemonInfo => {
                   pokemonListClone.push({ ...pokemon, ...pokemonInfo });
                   resolve();
-                })
+                });
               })
             }
 
