@@ -9,6 +9,8 @@
     "Stats": "Estadísticas",
     "Search your Pokemon!": "¡Busca tu Pokemon!",
     "Pokemon not found": "Pokemon no encontrado",
+    "Pokedex Entry": "Descripción de la Pokedex",
+    "Evolution": "Evolución",
     "PokemonTypes": {
         "normal": "Normal",
         "fire": "Fuego",
