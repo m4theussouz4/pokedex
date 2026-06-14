@@ -14,6 +14,10 @@ export const loadPokemonListSuccess = createAction(
   props<{ pokemonList: PokemonInfo[], hasNext: boolean, offset: number }>()
 );
 
+export const loadPokemonListComplete = createAction(
+  '[App] Load Pokemon List Complete'
+);
+
 export const loadPokemonListError = createAction(
   '[App] Load Pokemon List Error',
   props<{ error: any }>()
@@ -51,6 +55,15 @@ export const searchPokemonError = createAction(
 export const filterPokemonByType = createAction(
   '[App] Filter Pokemon By Type',
   props<{ pokemonType: string }>()
+);
+
+export const filterPokemonBatchSuccess = createAction(
+  '[App] Filter Pokemon Batch Success',
+  props<{ pokemonList: PokemonInfo[] }>()
+);
+
+export const filterPokemonComplete = createAction(
+  '[App] Filter Pokemon Complete'
 );
 
 export const setIsFilteredList = createAction(

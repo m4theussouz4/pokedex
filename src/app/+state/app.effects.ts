@@ -1,12 +1,31 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { catchError, map, mergeMap, of, switchMap, withLatestFrom } from 'rxjs';
+import {
+  catchError,
+  concat,
+  concatMap,
+  EMPTY,
+  exhaustMap,
+  forkJoin,
+  from,
+  map,
+  mergeMap,
+  Observable,
+  of,
+  range,
+  switchMap,
+  withLatestFrom,
+} from 'rxjs';
 import { PokemonService } from '../shared/services/pokemon/pokemon.service';
 import * as AppActions from './app.actions';
 import * as AppSelectors from './app.selectors'
 import { AppState } from './app.reducer';
 import { PokemonInfo } from '../shared/models/pokemon.model';
+
+const POKEMON_BATCH_SIZE = 25;
+const BATCHES_PER_LOAD = 4;
+const POKEMON_PER_LOAD = POKEMON_BATCH_SIZE * BATCHES_PER_LOAD;
 
 @Injectable()
 export class AppEffects {
@@ -15,32 +34,59 @@ export class AppEffects {
     this.actions$.pipe(
       ofType(AppActions.loadPokemonList),
       withLatestFrom(this.store.select(AppSelectors.getAppState)),
-      mergeMap(([_, pokemonState]) => {
-        this.store.dispatch(AppActions.setLoading());
-        this.store.dispatch(AppActions.loadPokemonWeaknesses());
+      exhaustMap(([_, pokemonState]) => {
+        let nextOffset = pokemonState.currentOffset;
+        let hasNext = pokemonState.hasNextPage;
 
-        return this.pokemonService.getAll(pokemonState.currentOffset).pipe(
-          switchMap(async data => {
+        const initialActions = [
+          AppActions.setLoading(),
+          ...(Object.keys(pokemonState.pokemonWeaknesses).length
+            ? []
+            : [AppActions.loadPokemonWeaknesses()]),
+        ];
 
-            let pokemonListClone: PokemonInfo[] = [];
+        const batches$ = range(0, BATCHES_PER_LOAD).pipe(
+          concatMap(() => {
+            if (!hasNext) return EMPTY;
 
-            for (const pokemon of data.results) {
-              await new Promise<void>((resolve) => {
-                this.pokemonService.getById(pokemon.name).subscribe(pokemonInfo => {
-                  pokemonListClone.push({ ...pokemon, ...pokemonInfo });
-                  resolve();
-                });
+            return this.pokemonService.getAll(nextOffset, POKEMON_BATCH_SIZE).pipe(
+              switchMap(data => {
+                hasNext = data.next !== null;
+                nextOffset += POKEMON_BATCH_SIZE;
+
+                const pokemonDetails$ = data.results.length
+                  ? forkJoin(
+                      data.results.map(pokemon =>
+                        this.pokemonService.getById(pokemon.name).pipe(
+                          map(pokemonInfo => ({ ...pokemon, ...pokemonInfo }))
+                        )
+                      )
+                    )
+                  : of([]);
+
+                return pokemonDetails$.pipe(
+                  map(pokemonList =>
+                    AppActions.loadPokemonListSuccess({
+                      pokemonList,
+                      hasNext,
+                      offset: nextOffset,
+                    })
+                  )
+                );
               })
-            }
+            );
+          })
+        );
 
-            this.store.dispatch(AppActions.loadPokemonListSuccess({ pokemonList: pokemonListClone, hasNext: data.next !== null, offset: pokemonState.currentOffset + 100 }));
-
-          }),
-          catchError(error => of(AppActions.loadPokemonListError(error)))
-        )
+        return concat(
+          from(initialActions),
+          batches$,
+          of(AppActions.loadPokemonListComplete())
+        ).pipe(
+          catchError(error => of(AppActions.loadPokemonListError({ error })))
+        );
       })
-    ),
-    { dispatch: false }
+    )
   );
 
   loadPokemonWeaknesses$ = createEffect(() =>
@@ -70,7 +116,10 @@ export class AppEffects {
     this.actions$.pipe(
       ofType(AppActions.searchPokemon),
       mergeMap(({ search }) => {
-        if(search === '') return of(this.store.dispatch(AppActions.searchPokemonSucess({ pokemonList: []})));
+        if(search === '') {
+          this.store.dispatch(AppActions.setIsFilteredList({ isFilteredList: false }));
+          return of(this.store.dispatch(AppActions.searchPokemonSucess({ pokemonList: []})));
+        }
         
         return this.pokemonService.getById(search).pipe(
           map(pokemonInfo => {
@@ -87,34 +136,53 @@ export class AppEffects {
   filterPokemon$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AppActions.filterPokemonByType),
-      mergeMap(({ pokemonType }) => {
+      switchMap(({ pokemonType }) => {
         if(pokemonType === '') {
-          this.store.dispatch(AppActions.setIsFilteredList({ isFilteredList: false}))
-          return of(this.store.dispatch(AppActions.searchPokemonSucess({ pokemonList: []})));
+          return from([
+            AppActions.setIsFilteredList({ isFilteredList: false }),
+            AppActions.searchPokemonSucess({ pokemonList: [] }),
+          ]);
         }
 
         return this.pokemonService.getByType(pokemonType).pipe(
-          switchMap(async data => {
+          switchMap(data => {
+            const pokemonList = data.slice(0, POKEMON_PER_LOAD);
+            const batchCount = pokemonList.length / POKEMON_BATCH_SIZE;
 
-            let pokemonListClone: any[] = [];
+            const batches$ = range(0, batchCount).pipe(
+              concatMap(batchIndex => {
+                const batchStart = batchIndex * POKEMON_BATCH_SIZE;
+                const pokemonBatch = pokemonList.slice(
+                  batchStart,
+                  batchStart + POKEMON_BATCH_SIZE
+                );
 
-            for (const pokemon of data) {
-              await new Promise<void>((resolve) => {
-                this.pokemonService.getById(pokemon.name).subscribe(pokemonInfo => {
-                  pokemonListClone.push({ ...pokemon, ...pokemonInfo });
-                  resolve();
-                });
+                const pokemonDetails: Observable<PokemonInfo>[] = pokemonBatch.map(
+                  (pokemon: PokemonInfo) =>
+                    this.pokemonService.getById(pokemon.name).pipe(
+                      map(pokemonInfo => (
+                        { ...pokemon, ...pokemonInfo } as PokemonInfo
+                      ))
+                    )
+                );
+
+                return forkJoin(pokemonDetails).pipe(
+                  map(batch =>
+                    AppActions.filterPokemonBatchSuccess({ pokemonList: batch })
+                  )
+                );
               })
-            }
+            );
 
-            this.store.dispatch(AppActions.searchPokemonSucess({ pokemonList: pokemonListClone }));
-
+            return concat(
+              batches$,
+              of(AppActions.filterPokemonComplete())
+            );
           }),
-          catchError(error => of(this.store.dispatch(AppActions.searchPokemonError(error))))
+          catchError(error => of(AppActions.searchPokemonError({ error })))
         )
       })
-    ),
-    { dispatch: false }
+    )
   );
 
   constructor(

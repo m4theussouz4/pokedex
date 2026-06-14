@@ -36,9 +36,19 @@ export const appReducer = createReducer(
     ...state,
     pokemonList: [...state.pokemonList, ...pokemonList],
     hasNextPage: hasNext,
-    loaded: true,
     currentOffset: offset,
     isFilteredList: false,
+  })),
+
+  on(AppActions.loadPokemonListComplete, state => ({
+    ...state,
+    loaded: true,
+  })),
+
+  on(AppActions.loadPokemonListError, (state, { error }) => ({
+    ...state,
+    error,
+    loaded: true,
   })),
 
   on(AppActions.selectPokemon, (state, { pokemonInfo }) => ({ 
@@ -55,6 +65,7 @@ export const appReducer = createReducer(
     ...state,
     loaded: false,
     isFilteredList: true,
+    pokemonSearchList: [],
   })),
   
   on(AppActions.searchPokemonSucess, (state, { pokemonList }) => ({ 
@@ -73,6 +84,17 @@ export const appReducer = createReducer(
     ...state,
     isFilteredList: true,
     loaded: false,
+    pokemonSearchList: [],
+  })),
+
+  on(AppActions.filterPokemonBatchSuccess, (state, { pokemonList }) => ({
+    ...state,
+    pokemonSearchList: [...state.pokemonSearchList, ...pokemonList],
+  })),
+
+  on(AppActions.filterPokemonComplete, state => ({
+    ...state,
+    loaded: true,
   })),
 
   on(AppActions.setIsFilteredList, (state, { isFilteredList }) => ({ 
