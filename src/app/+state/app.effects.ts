@@ -147,7 +147,7 @@ export class AppEffects {
         return this.pokemonService.getByType(pokemonType).pipe(
           switchMap(data => {
             const pokemonList = data.slice(0, POKEMON_PER_LOAD);
-            const batchCount = pokemonList.length / POKEMON_BATCH_SIZE;
+            const batchCount = Math.ceil(pokemonList.length / POKEMON_BATCH_SIZE);
 
             const batches$ = range(0, batchCount).pipe(
               concatMap(batchIndex => {
